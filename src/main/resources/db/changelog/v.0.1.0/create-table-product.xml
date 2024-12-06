@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="create-table-product" author="Boris">
+    <createTable tableName="product">
+
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+
+      <column name="title" type="varchar(64)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+
+      <column name="price" type="decimal(7,2)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="image" type="varchar(256)">
+        <constraints nullable="true"/>
+      </column>
+
+      <column name="description" type="varchar(256)">
+        <constraints nullable="true"/>
+      </column>
+
+      <column name="active" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+
+    </createTable>
+
+    <!-- Indexes -->
+    <createIndex indexName="idx_product_title" tableName="product">
+      <column name="title"/>
+    </createIndex>
+
+    <createIndex indexName="idx_product_price" tableName="product">
+      <column name="price"/>
+    </createIndex>
+
+    <createIndex indexName="idx_product_active" tableName="product">
+      <column name="active"/>
+    </createIndex>
+
+  </changeSet>
+</databaseChangeLog>
