@@ -17,8 +17,13 @@ import train.shp4k.service.mapping.ProductMappingService;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-  private ProductRepository repository;
-  private ProductMappingService mappingService;
+  private final ProductRepository repository;
+  private final ProductMappingService mappingService;
+
+  public ProductServiceImpl(ProductRepository repository, ProductMappingService mappingService) {
+    this.repository = repository;
+    this.mappingService = mappingService;
+  }
 
   @Override
   public ProductDto addProduct(ProductDto dto) {
