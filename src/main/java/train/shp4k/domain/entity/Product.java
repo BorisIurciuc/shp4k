@@ -8,9 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Objects;
-import org.antlr.v4.runtime.misc.NotNull;
-import org.hibernate.annotations.processing.Pattern;
-import org.springframework.lang.NonNull;
+
 
 /**
  * 07/12/2024 shp4k
