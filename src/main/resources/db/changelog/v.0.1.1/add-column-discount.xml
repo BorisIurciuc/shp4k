@@ -4,8 +4,14 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
-  <include file="v.0.1.0/changelog.xml" relativeToChangelogFile="true"/>
-  <include file="v.0.1.1/changelog.xml" relativeToChangelogFile="true"/>
-  <include file="v.0.2.0/changelog.xml" relativeToChangelogFile="true"/>
+  <changeSet id="add-column-discount" author="Boris">
+
+    <addColumn tableName="product">
+      <column name="discount" type="decimal" defaultValue="0.9">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+  </changeSet>
 
 </databaseChangeLog>
