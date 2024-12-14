@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.Objects;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  * 14/12/2024 shp4k
@@ -103,9 +104,9 @@ public class User {
         '}';
   }
 
-  //     Метод для получения зашифрованного пароля
-//     для добавления пользователей в БД вручную
-  public static void main(String[] args) {
-    System.out.println(new BCryptPasswordEncoder().encode("111"));
-  }
+//  //     Метод для получения зашифрованного пароля
+////     для добавления пользователей в БД вручную
+//  public static void main(String[] args) {
+//    System.out.println(new BCryptPasswordEncoder().encode("111"));
+//  }
 }
