@@ -1,5 +1,8 @@
 package train.shp4k.domain.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -11,9 +14,16 @@ import java.util.Objects;
 public class ProductDto {
 
   private Long id;
+
+  @NotBlank(message = "Title is required")
   private String title;
+
   private String description;
+
+  @NotNull
+  @Positive(message = "Price must be greater than 0")
   private BigDecimal price;
+
   private String image;
 
   public Long getId() {
@@ -23,6 +33,7 @@ public class ProductDto {
   public void setId(Long id) {
     this.id = id;
   }
+
 
   public String getTitle() {
     return title;
@@ -39,6 +50,7 @@ public class ProductDto {
   public void setDescription(String description) {
     this.description = description;
   }
+
 
   public BigDecimal getPrice() {
     return price;
