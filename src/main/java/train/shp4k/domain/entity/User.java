@@ -2,21 +2,30 @@ package train.shp4k.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import java.util.Collection;
 import java.util.Objects;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import java.util.Set;
+import jakarta.validation.constraints.NotBlank;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * 14/12/2024 shp4k
  *
- * @author Boris Iurciuc (cohort36)
+ * @author Boris Iurciuc
  */
 @Entity
 @Table
-public class User {
+public class User implements UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,16 +33,26 @@ public class User {
   private Long id;
 
   @Column(name = "username", unique = true, nullable = false)
+  @NotBlank(message = "Username cannot be blank")
   private String username;
 
   @Column(name = "password", nullable = false)
   private String password;
 
   @Column(name = "email", unique = true, nullable = false)
+  @NotBlank(message = "Email cannot be blank")
+  @Email(message = "Email should be valid")
   private String email;
 
   @Column(name = "active",  nullable = false)
   private boolean active;
+
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(name = "user_role",
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name="role_id")
+  )
+  private Set<Role> roles;
 
   public Long getId() {
     return id;
@@ -49,6 +68,11 @@ public class User {
 
   public void setUsername(String username) {
     this.username = username;
+  }
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return roles;
   }
 
   public String getPassword() {
@@ -95,13 +119,8 @@ public class User {
 
   @Override
   public String toString() {
-    return "User{" +
-        "id=" + id +
-        ", username='" + username + '\'' +
-        ", password='" + password + '\'' +
-        ", email='" + email + '\'' +
-        ", active=" + active +
-        '}';
+    return String.format("User: id - %d, username - %s, email - %s, roles - %s", id, username, email,
+        roles == null ? "empty" : roles);
   }
 
 //  //     Метод для получения зашифрованного пароля

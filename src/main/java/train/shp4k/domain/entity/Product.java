@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -26,9 +27,11 @@ public class Product {
   private Long id;
 
   @Column(name = "title")
+  @NotBlank(message = "Title cannot be blank")
   private String title;
 
   @Column(name ="price")
+  @NotBlank(message = "Price cannot be blank")
   private BigDecimal price;
 
   @Column(name = "image")
