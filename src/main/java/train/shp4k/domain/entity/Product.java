@@ -6,11 +6,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.util.Objects;
-import org.antlr.v4.runtime.misc.NotNull;
-import org.hibernate.annotations.processing.Pattern;
-import org.springframework.lang.NonNull;
+
 
 /**
  * 07/12/2024 shp4k
@@ -28,9 +27,11 @@ public class Product {
   private Long id;
 
   @Column(name = "title")
+  @NotBlank(message = "Title cannot be blank")
   private String title;
 
   @Column(name ="price")
+
   private BigDecimal price;
 
   @Column(name = "image")
