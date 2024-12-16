@@ -1,5 +1,6 @@
 package train.shp4k.domain.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -11,8 +12,14 @@ import java.util.Objects;
  *
  * @author Boris Iurciuc (cohort36)
  */
+@Schema(description = "Class that describes Product") // add for Swagger
 public class ProductDto {
 
+  @Schema( // add for Swagger
+      description = "Product unique identifier",
+      example = "111",
+      accessMode = Schema.AccessMode.READ_ONLY
+  )
   private Long id;
 
   @NotBlank(message = "Title is required")
@@ -25,6 +32,16 @@ public class ProductDto {
   private BigDecimal price;
 
   private String image;
+
+  public ProductDto() {}
+
+  public ProductDto(Long id, String title, String description, BigDecimal price, String image) {
+    this.id = id;
+    this.title = title;
+    this.description = description;
+    this.price = price;
+    this.image = image;
+  }
 
   public Long getId() {
     return id;

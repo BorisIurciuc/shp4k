@@ -32,13 +32,20 @@ public class ProductController {
     this.service = service;
   }
 
+//  @PostMapping
+//  @Operation(summary = "Add a new product", description = "Creates a new product and saves it in the database.")
+//  public ResponseEntity<ProductDto> addProduct(@Valid @RequestBody ProductDto dto) {
+//    ProductDto product = service.addProduct(dto);
+//    return ResponseEntity.ok(product);
+//  }
+
   @PostMapping
-  @Operation(summary = "Add a new product", description = "Creates a new product and saves it in the database.")
-  public ProductDto addProduct(@Valid @RequestBody ProductDto dto) {
+  public ProductDto save(@Valid @RequestBody ProductDto dto){
     return service.addProduct(dto);
   }
 
   @GetMapping
+  @Operation(summary = "Получить все продукты", description = "Receive all products.")
   public List<ProductDto> getProductsAll() {
     return service.getProductsAll();
   }

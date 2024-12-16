@@ -31,7 +31,7 @@ public class Product {
   private String title;
 
   @Column(name ="price")
-  @NotBlank(message = "Price cannot be blank")
+
   private BigDecimal price;
 
   @Column(name = "image")
