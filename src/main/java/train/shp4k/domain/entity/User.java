@@ -99,6 +99,14 @@ public class User implements UserDetails {
     this.active = active;
   }
 
+  public Set<Role> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(Set<Role> roles) {
+    this.roles = roles;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -109,12 +117,13 @@ public class User implements UserDetails {
     }
     return isActive() == user.isActive() && Objects.equals(getId(), user.getId())
         && Objects.equals(getUsername(), user.getUsername()) && Objects.equals(
-        getPassword(), user.getPassword()) && Objects.equals(getEmail(), user.getEmail());
+        getPassword(), user.getPassword()) && Objects.equals(getEmail(), user.getEmail())
+        && Objects.equals(getRoles(), user.getRoles());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getId(), getUsername(), getPassword(), getEmail(), isActive());
+    return Objects.hash(getId(), getUsername(), getPassword(), getEmail(), isActive(), getRoles());
   }
 
   @Override

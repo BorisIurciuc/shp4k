@@ -33,14 +33,17 @@ public class ProductDto {
 
   private String image;
 
+  private int stockQuantity;
+
   public ProductDto() {}
 
-  public ProductDto(Long id, String title, String description, BigDecimal price, String image) {
+  public ProductDto(Long id, String title, String description, BigDecimal price, String image, int stockQuantity) {
     this.id = id;
     this.title = title;
     this.description = description;
     this.price = price;
     this.image = image;
+    this.stockQuantity = stockQuantity;
   }
 
   public Long getId() {
@@ -85,6 +88,10 @@ public class ProductDto {
     this.image = image;
   }
 
+  public int getStockQuantity() { return stockQuantity; }
+
+  public void setStockQuantity(int stockQuantity) { this.stockQuantity = stockQuantity; }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -93,21 +100,23 @@ public class ProductDto {
     if (!(o instanceof ProductDto that)) {
       return false;
     }
-    return Objects.equals(getId(), that.getId()) && Objects.equals(getTitle(),
-        that.getTitle()) && Objects.equals(getDescription(), that.getDescription())
+    return getStockQuantity() == that.getStockQuantity() && Objects.equals(getId(),
+        that.getId()) && Objects.equals(getTitle(), that.getTitle())
+        && Objects.equals(getDescription(), that.getDescription())
         && Objects.equals(getPrice(), that.getPrice()) && Objects.equals(
         getImage(), that.getImage());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getId(), getTitle(), getDescription(), getPrice(), getImage());
+    return Objects.hash(getId(), getTitle(), getDescription(), getPrice(), getImage(),
+        getStockQuantity());
   }
 
   @Override
   public String toString() {
-    return String.format("Product: id - %d, title - %s, price - %s, description - %s",
-        id, title, price, description);
+    return String.format("Product: id - %d, title - %s, price - %s, description - %s, stockQuantity - %s",
+        id, title, price, description, stockQuantity);
   }
 
 }
