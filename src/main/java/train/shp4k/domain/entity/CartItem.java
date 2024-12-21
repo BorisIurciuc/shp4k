@@ -5,9 +5,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+//import jakarta.persistence.Temporal;
+//import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.Min;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -17,7 +23,10 @@ import java.util.Objects;
  */
 
 @Entity
-@Table(name = "cart_items")
+@Table(name = "cart_items", indexes = {
+    @Index(name = "idx_cart_id", columnList = "cart_id"),
+    @Index(name = "idx_cart_product_unique", columnList = "cart_id, product_id", unique = true),
+})
 public class CartItem{
 
   @Id
@@ -32,14 +41,25 @@ public class CartItem{
   @JoinColumn(name = "product_id", nullable = false)
   private Product product;
 
+  @Min(value = 1, message = "Quantity must be at least 1")
   @Column(nullable = false)
   private int quantity;
+
+  @Column(name = "created_at", nullable = false)
+  //@Temporal(TemporalType.TIMESTAMP)
+  private LocalDateTime createdAt;
+
+  @PrePersist
+  protected void onCreate() {
+    createdAt = LocalDateTime.now();
+  }
 
   public CartItem(Long id, Cart cart, Product product, int quantity) {
     this.id = id;
     this.cart = cart;
     this.product = product;
     this.quantity = quantity;
+    this.createdAt = LocalDateTime.now();
   }
 
   public CartItem() {}
@@ -52,6 +72,8 @@ public class CartItem{
   public void setProduct(Product product) {    this.product = product;  }
   public int getQuantity() {    return quantity;  }
   public void setQuantity(int quantity) {   this.quantity = quantity;  }
+  public LocalDateTime getCreatedAt() {    return createdAt;  }
+  public void setCreatedAt(LocalDateTime createdAt) {    this.createdAt = createdAt;  }
 
   @Override
   public boolean equals(Object o) {
@@ -63,20 +85,18 @@ public class CartItem{
     }
     return quantity == cartItem.quantity && Objects.equals(id, cartItem.id)
         && Objects.equals(cart, cartItem.cart) && Objects.equals(product,
-        cartItem.product);
+        cartItem.product) &&
+        Objects.equals(createdAt, cartItem.createdAt);
   }
   @Override
   public int hashCode() {
-    return Objects.hash(id, cart, product, quantity);
+    return Objects.hash(id, cart, product, quantity, createdAt);
   }
 
   @Override
   public String toString() {
     return "CartItem{" +
-        "id=" + id +
-        ", cart=" + cart +
-        ", product=" + product +
-        ", quantity=" + quantity +
-        '}';
+        "id=" + id + ", cart=" + cart + ", product=" + product + ", quantity=" + quantity
+        + ", createdAt=" + createdAt + '}';
   }
 }

@@ -11,10 +11,16 @@
         <constraints primaryKey="true"/>
       </column>
       <column name="cart_id" type="bigint">
-        <constraints nullable="false" unique="true"/>
+        <constraints nullable="false"/>
       </column>
       <column name="product_id" type="bigint">
-        <constraints nullable="false" unique="true"/>
+        <constraints nullable="false"/>
+      </column>
+      <column name="quantity" type="int">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
       </column>
     </createTable>
 
@@ -31,6 +37,15 @@
       constraintName="fk_cart_to_product"
       referencedTableName="product"
       referencedColumnNames="id"/>
+    
+    <createIndex tableName="cart_items" indexName="idx_cart_id">
+      <column name="cart_id"></column>
+    </createIndex>
+
+    <createIndex tableName="cart_items" indexName="idx_cart_product_unique" unique="true">
+      <column name="cart_id"/>
+      <column name="product_id"/>
+    </createIndex>
 
   </changeSet>
 
