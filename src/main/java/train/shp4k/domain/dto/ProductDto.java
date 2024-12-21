@@ -1,5 +1,9 @@
 package train.shp4k.domain.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -8,13 +12,39 @@ import java.util.Objects;
  *
  * @author Boris Iurciuc (cohort36)
  */
+@Schema(description = "Class that describes Product") // add for Swagger
 public class ProductDto {
 
+  @Schema( // add for Swagger
+      description = "Product unique identifier",
+      example = "111",
+      accessMode = Schema.AccessMode.READ_ONLY
+  )
   private Long id;
+
+  @NotBlank(message = "Title is required")
   private String title;
+
   private String description;
+
+  @NotNull
+  @Positive(message = "Price must be greater than 0")
   private BigDecimal price;
+
   private String image;
+
+  private int stockQuantity;
+
+  public ProductDto() {}
+
+  public ProductDto(Long id, String title, String description, BigDecimal price, String image, int stockQuantity) {
+    this.id = id;
+    this.title = title;
+    this.description = description;
+    this.price = price;
+    this.image = image;
+    this.stockQuantity = stockQuantity;
+  }
 
   public Long getId() {
     return id;
@@ -23,6 +53,7 @@ public class ProductDto {
   public void setId(Long id) {
     this.id = id;
   }
+
 
   public String getTitle() {
     return title;
@@ -40,6 +71,7 @@ public class ProductDto {
     this.description = description;
   }
 
+
   public BigDecimal getPrice() {
     return price;
   }
@@ -56,6 +88,10 @@ public class ProductDto {
     this.image = image;
   }
 
+  public int getStockQuantity() { return stockQuantity; }
+
+  public void setStockQuantity(int stockQuantity) { this.stockQuantity = stockQuantity; }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -64,21 +100,23 @@ public class ProductDto {
     if (!(o instanceof ProductDto that)) {
       return false;
     }
-    return Objects.equals(getId(), that.getId()) && Objects.equals(getTitle(),
-        that.getTitle()) && Objects.equals(getDescription(), that.getDescription())
+    return getStockQuantity() == that.getStockQuantity() && Objects.equals(getId(),
+        that.getId()) && Objects.equals(getTitle(), that.getTitle())
+        && Objects.equals(getDescription(), that.getDescription())
         && Objects.equals(getPrice(), that.getPrice()) && Objects.equals(
         getImage(), that.getImage());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getId(), getTitle(), getDescription(), getPrice(), getImage());
+    return Objects.hash(getId(), getTitle(), getDescription(), getPrice(), getImage(),
+        getStockQuantity());
   }
 
   @Override
   public String toString() {
-    return String.format("Product: id - %d, title - %s, price - %s, description - %s",
-        id, title, price, description);
+    return String.format("Product: id - %d, title - %s, price - %s, description - %s, stockQuantity - %s",
+        id, title, price, description, stockQuantity);
   }
 
 }

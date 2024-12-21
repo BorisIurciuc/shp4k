@@ -31,7 +31,7 @@ public class Product {
   private String title;
 
   @Column(name ="price")
-  @NotBlank(message = "Price cannot be blank")
+
   private BigDecimal price;
 
   @Column(name = "image")
@@ -42,6 +42,9 @@ public class Product {
 
   @Column(name = "active")
   private boolean active;
+
+  @Column(name = "stock_quantity")
+  private int stockQuantity;
 
   public Long getId() {
     return id;
@@ -91,6 +94,14 @@ public class Product {
     this.active = active;
   }
 
+  public int getStockQuantity() {
+    return stockQuantity;
+  }
+
+  public void setStockQuantity(int stockQuantity) {
+    this.stockQuantity = stockQuantity;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -99,20 +110,22 @@ public class Product {
     if (!(o instanceof Product product)) {
       return false;
     }
-    return isActive() == product.isActive() && Objects.equals(getId(), product.getId())
-        && Objects.equals(getTitle(), product.getTitle()) && Objects.equals(
-        getPrice(), product.getPrice()) && Objects.equals(getImage(), product.getImage())
-        && Objects.equals(getDescription(), product.getDescription());
+    return isActive() == product.isActive() && getStockQuantity() == product.getStockQuantity()
+        && Objects.equals(getId(), product.getId()) && Objects.equals(getTitle(),
+        product.getTitle()) && Objects.equals(getPrice(), product.getPrice())
+        && Objects.equals(getImage(), product.getImage()) && Objects.equals(
+        getDescription(), product.getDescription());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getId(), getTitle(), getPrice(), getImage(), getDescription(), isActive());
+    return Objects.hash(getId(), getTitle(), getPrice(), getImage(), getDescription(), isActive(),
+        getStockQuantity());
   }
 
   @Override
   public String toString() {
-    return String.format("Product: id - %d, title - %s, price - %s, description - %s, active - %s",
-        id, title, price, description, active ? "yes" : "no");
+    return String.format("Product: id - %d, title - %s, price - %s, description - %s, active - %s, stockQuantity - %s",
+        id, title, price, description, active ? "yes" : "no", stockQuantity);
   }
 }

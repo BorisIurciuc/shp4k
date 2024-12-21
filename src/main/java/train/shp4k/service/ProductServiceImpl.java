@@ -27,8 +27,10 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductDto addProduct(ProductDto dto) {
+
     Product entity = mappingService.mapDtoToEntity(dto);
     repository.save(entity);
+
     return mappingService.mapEntityToDto(entity);
   }
 
@@ -42,16 +44,29 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductDto getProductById(Long id) {
-    return null;
+    Product entity = repository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+    return mappingService.mapEntityToDto(entity);
   }
 
   @Override
-  public ProductDto updateProduct(ProductDto dto) {
-    return null;
+  public ProductDto updateProduct(Long id, ProductDto dto) {
+    Product existingProduct = repository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
+    existingProduct.setTitle(dto.getTitle());
+    existingProduct.setDescription(dto.getDescription());
+    existingProduct.setPrice(dto.getPrice());
+    existingProduct.setImage(dto.getImage());
+    existingProduct.setStockQuantity(dto.getStockQuantity());
+
+
+    Product updatedProduct = repository.save(existingProduct);
+    return mappingService.mapEntityToDto(updatedProduct);
   }
 
   @Override
-  public void deleteProductById(ProductDto dto) {
-
+  public void deleteProductById(Long id) {
+    repository.deleteById(id);
   }
 }
