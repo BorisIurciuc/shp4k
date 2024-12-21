@@ -9,6 +9,6 @@
   </changeSet>
 
   <include file="create-table-cart.xml" relativeToChangelogFile="true"/>
-  <include file="create-foreign-keys-user-cart.xml" relativeToChangelogFile="true"/>
+  <include file="create-table-cart_items.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
