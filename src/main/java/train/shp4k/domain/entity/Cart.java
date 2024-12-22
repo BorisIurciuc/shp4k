@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ public class Cart {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @NotNull
   @OneToOne
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
