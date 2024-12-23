@@ -39,18 +39,22 @@ public class Cart {
   private List<CartItem> cartItems = new ArrayList<>();
 
   @Column(name = "total_price", nullable = false)
-  private BigDecimal totalPrice;
+  private BigDecimal totalPrice = BigDecimal.ZERO;
 
   @Column(name = "total_items", nullable = false)
-  private int totalItems;
+  private int totalItems = 0;
 
+  @Column(name = "active", nullable = false)
+  private boolean active = false;
 
-  public Cart(Long id, User user, List<CartItem> cartItems, BigDecimal totalPrice, int totalItems) {
+  public Cart(Long id, User user, List<CartItem> cartItems, BigDecimal totalPrice, int totalItems,
+      boolean active) {
     this.id = id;
     this.user = user;
     this.cartItems = cartItems;
     this.totalPrice = totalPrice;
     this.totalItems = totalItems;
+    this.active = active;
   }
 
   public Cart() {}
@@ -66,6 +70,14 @@ public class Cart {
   public int getTotalItems() {    return totalItems;  }
   public void setTotalItems(int totalItems) {    this.totalItems = totalItems;  }
 
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -74,20 +86,27 @@ public class Cart {
     if (!(o instanceof Cart cart)) {
       return false;
     }
-    return getTotalItems() == cart.getTotalItems() && Objects.equals(getId(), cart.getId())
-        && Objects.equals(getUser(), cart.getUser()) && Objects.equals(
-        getCartItems(), cart.getCartItems()) && Objects.equals(getTotalPrice(),
-        cart.getTotalPrice());
+    return getTotalItems() == cart.getTotalItems() && isActive() == cart.isActive()
+        && Objects.equals(getId(), cart.getId()) && Objects.equals(getUser(),
+        cart.getUser()) && Objects.equals(getCartItems(), cart.getCartItems())
+        && Objects.equals(getTotalPrice(), cart.getTotalPrice());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getId(), getUser(), getCartItems(), getTotalPrice(), getTotalItems());
+    return Objects.hash(getId(), getUser(), getCartItems(), getTotalPrice(), getTotalItems(),
+        isActive());
   }
 
   @Override
   public String toString() {
-    return "Cart{" + "id=" + id + ", user=" + user + ", cartItems=" + cartItems +
-        ", totalPrice=" + totalPrice + ", totalItems=" + totalItems + '}';
+    return "Cart{" +
+        "id=" + id +
+        ", user=" + user +
+        ", cartItems=" + cartItems +
+        ", totalPrice=" + totalPrice +
+        ", totalItems=" + totalItems +
+        ", active=" + active +
+        '}';
   }
 }

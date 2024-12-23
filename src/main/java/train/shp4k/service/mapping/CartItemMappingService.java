@@ -9,6 +9,7 @@ import train.shp4k.domain.entity.CartItem;
 public interface CartItemMappingService {
 
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
   CartItem mapDtoToEntity(CartItemDto dto);
   CartItemDto mapEntityToDto(CartItem entity);
 
