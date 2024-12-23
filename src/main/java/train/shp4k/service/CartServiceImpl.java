@@ -53,54 +53,43 @@ public class CartServiceImpl implements CartService {
   }
 
   @Override
-  public CartDto addCart(CartDto dto) {
-    // Проверяем существование пользователя
-    User user = userRepository.findById(dto.getUser().getId())
+  public CartDto addCart(Long userId, Long productId, Integer quantity) {
+    // Find user
+    User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException(
-            "User not found with id: " + dto.getUser().getId()));
+            "User not found with id: " + userId));
 
-    // Проверяем существование всех продуктов в CartItems
-//    dto.getCartItems().forEach(cartItemDto -> {
-//      Product product = productRepository.findById(cartItemDto.getProduct().getId())
-//          .orElseThrow(() -> new ResourceNotFoundException(
-//              "Product not found with id: " + cartItemDto.getProduct().getId()));
-//    });
+    // Find product
+    Product product = productRepository.findById(productId)
+        .orElseThrow(() -> new ResourceNotFoundException(
+            "Product not found with id: " + productId));
 
-    // Проверяем, нет ли уже активной корзины у пользователя
-    Optional<Cart> existingCart = cartRepository.findActiveCartByUserId(user.getId());
+    // Check if user already has an active cart
+    Optional<Cart> existingCart = cartRepository.findActiveCartByUserId(userId);
     if (existingCart.isPresent()) {
       throw new ResourceAlreadyExistsException(
-          "Active cart already exists for user: " + user.getId());
+          "Active cart already exists for user: " + userId);
     }
 
-    // Конвертируем DTO в сущность
-    Cart cartEntity = mappingService.mapDtoToEntity(dto);
-    cartEntity.setUser(user);
-    cartEntity.setActive(true); // Устанавливаем статус активной корзины
+    // Create new cart
+    Cart cart = new Cart();
+    cart.setUser(user);
+    cart.setActive(true);
+    Cart savedCart = cartRepository.save(cart);
 
-    // Сохраняем корзину
-    Cart savedCart = cartRepository.save(cartEntity);
+    // Create cart item
+    CartItem cartItem = new CartItem();
+    cartItem.setCart(savedCart);
+    cartItem.setProduct(product);
+    cartItem.setQuantity(quantity);
+    cartItemRepository.save(cartItem);
 
-    // Добавляем каждый CartItem отдельно, связывая с сохраненной корзиной
-    if (dto.getCartItems() != null && !dto.getCartItems().isEmpty()) {
-      dto.getCartItems().forEach(cartItemDto -> {
-        Product product = productRepository.findById(cartItemDto.getProduct().getId())
-            .orElseThrow(() -> new ResourceNotFoundException(
-                "Product not found with id: " + cartItemDto.getProduct().getId()));
-
-        CartItem cartItem = itemMappingService.mapDtoToEntity(cartItemDto);
-        cartItem.setCart(savedCart);
-        cartItem.setProduct(product);
-        cartItemRepository.save(cartItem);
-      });
-    }
-
-    // Получаем обновленную корзину со всеми связями
+    // Retrieve updated cart with all relationships
     Cart resultCart = cartRepository.findById(savedCart.getId())
         .orElseThrow(() -> new ResourceNotFoundException(
             "Cart not found after saving with id: " + savedCart.getId()));
 
-    // Конвертируем обратно в DTO и возвращаем
+    // Convert to DTO and return
     return mappingService.mapEntityToDto(resultCart);
   }
 
