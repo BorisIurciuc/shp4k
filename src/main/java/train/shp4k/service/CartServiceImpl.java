@@ -60,11 +60,11 @@ public class CartServiceImpl implements CartService {
             "User not found with id: " + dto.getUser().getId()));
 
     // Проверяем существование всех продуктов в CartItems
-    dto.getCartItems().forEach(cartItemDto -> {
-      Product product = productRepository.findById(cartItemDto.getProduct().getId())
-          .orElseThrow(() -> new ResourceNotFoundException(
-              "Product not found with id: " + cartItemDto.getProduct().getId()));
-    });
+//    dto.getCartItems().forEach(cartItemDto -> {
+//      Product product = productRepository.findById(cartItemDto.getProduct().getId())
+//          .orElseThrow(() -> new ResourceNotFoundException(
+//              "Product not found with id: " + cartItemDto.getProduct().getId()));
+//    });
 
     // Проверяем, нет ли уже активной корзины у пользователя
     Optional<Cart> existingCart = cartRepository.findActiveCartByUserId(user.getId());
