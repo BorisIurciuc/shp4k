@@ -17,6 +17,9 @@ public class UserDto {
 
   private String password;
 
+  private boolean active;
+
+
   public Long getId() {
     return id;
   }
@@ -48,6 +51,10 @@ public class UserDto {
   public void setPassword(String password) {
     this.password = password;
   }
+
+  public boolean isActive() {    return active;  }
+
+  public void setActive(boolean active) {    this.active = active;  }
 
   @Override
   public boolean equals(Object o) {

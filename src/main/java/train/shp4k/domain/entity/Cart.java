@@ -94,7 +94,7 @@ public class Cart {
 
   @Override
   public int hashCode() {
-    return Objects.hash(getId(), getUser(), getCartItems(), getTotalPrice(), getTotalItems(),
+    return Objects.hash(getId(), getUser(), getTotalPrice(), getTotalItems(),
         isActive());
   }
 

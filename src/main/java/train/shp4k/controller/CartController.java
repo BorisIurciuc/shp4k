@@ -1,5 +1,6 @@
 package train.shp4k.controller;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,11 +27,16 @@ public class CartController {
   }
 
   @PostMapping
-  public CartDto addCart(
+  public CartDto openCart(
       @RequestParam Long userId,
       @RequestParam Long productId,
       @RequestParam Integer quantity) {
     return service.addCart(userId, productId, quantity);
+  }
+
+  @DeleteMapping
+  public void closeCart(@RequestParam Long cartId) {
+    service.removeCart(cartId);
   }
 }
 

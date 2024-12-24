@@ -12,5 +12,7 @@ import train.shp4k.domain.entity.Cart;
 
 public interface CartRepository extends JpaRepository<Cart, Long> {
 
-  Optional<Cart> findActiveCartByUserId(Long userId);
+  Optional<Cart> findByUserIdAndActiveTrue(Long userId);
+  Optional<Cart> findByUserId(Long userId);
+
 }

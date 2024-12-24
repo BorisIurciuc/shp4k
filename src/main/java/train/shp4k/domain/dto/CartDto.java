@@ -30,15 +30,18 @@ public class CartDto {
   @Min(value = 0, message = "Total items cannot be negative")
   private int totalItems;
 
+  private boolean active;
+
   public CartDto() {}
 
   public CartDto(Long id, UserDto user, List<CartItemDto> cartItems, BigDecimal totalPrice,
-      int totalItems) {
+      int totalItems, boolean active) {
     this.id = id;
     this.user = user;
     this.cartItems = cartItems;
     this.totalPrice = totalPrice;
     this.totalItems = totalItems;
+    this.active = active;
   }
 
   public Long getId() {    return id;  }
@@ -63,6 +66,14 @@ public class CartDto {
   public void setTotalItems(
       @Min(value = 0, message = "Total items cannot be negative") int totalItems) {
     this.totalItems = totalItems;
+  }
+
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
   }
 
   @Override

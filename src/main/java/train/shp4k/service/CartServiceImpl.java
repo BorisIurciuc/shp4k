@@ -1,5 +1,6 @@
 package train.shp4k.service;
 
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -8,23 +9,15 @@ import train.shp4k.domain.entity.Cart;
 import train.shp4k.domain.entity.CartItem;
 import train.shp4k.domain.entity.Product;
 import train.shp4k.domain.entity.User;
-import train.shp4k.exception_handling.exceptions.ResourceAlreadyExistsException;
 import train.shp4k.exception_handling.exceptions.ResourceNotFoundException;
 import train.shp4k.repository.CartItemRepository;
 import train.shp4k.repository.CartRepository;
 import train.shp4k.repository.ProductRepository;
 import train.shp4k.repository.UserRepository;
 import train.shp4k.service.interfaces.CartService;
-import train.shp4k.service.mapping.CartItemMappingService;
 import train.shp4k.service.mapping.CartMappingService;
 import train.shp4k.service.mapping.ProductMappingService;
-import train.shp4k.service.mapping.UserMappingService;
 
-/**
- * 22/12/2024 shp4k
- *
- * @author Boris Iurciuc (cohort36)
- */
 @Service
 public class CartServiceImpl implements CartService {
 
@@ -34,63 +27,65 @@ public class CartServiceImpl implements CartService {
   private final UserRepository userRepository;
 
   private final CartMappingService mappingService;
-  private final CartItemMappingService itemMappingService;
-  private final ProductMappingService productMappingService;
-  private final UserMappingService userMappingService;
+//  private final CartItemMappingService itemMappingService;
+//  private final ProductMappingService productMappingService;
 
   public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository,
       ProductRepository productRepository, UserRepository userRepository,
-      CartMappingService mappingService, CartItemMappingService itemMappingService,
-      ProductMappingService productMappingService, UserMappingService userMappingService) {
+      CartMappingService mappingService,
+      ProductMappingService productMappingService) {
     this.cartRepository = cartRepository;
     this.cartItemRepository = cartItemRepository;
     this.productRepository = productRepository;
     this.userRepository = userRepository;
     this.mappingService = mappingService;
-    this.itemMappingService = itemMappingService;
-    this.productMappingService = productMappingService;
-    this.userMappingService = userMappingService;
+//    this.itemMappingService = itemMappingService;
+//    this.productMappingService = productMappingService;
   }
 
   @Override
+  @Transactional
   public CartDto addCart(Long userId, Long productId, Integer quantity) {
-    // Find user
+    if (quantity < 1) {
+      throw new IllegalArgumentException("Quantity must be at least 1");
+    }
+
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException(
             "User not found with id: " + userId));
 
-    // Find product
     Product product = productRepository.findById(productId)
         .orElseThrow(() -> new ResourceNotFoundException(
             "Product not found with id: " + productId));
 
-    // Check if user already has an active cart
-    Optional<Cart> existingCart = cartRepository.findActiveCartByUserId(userId);
-    if (existingCart.isPresent()) {
-      throw new ResourceAlreadyExistsException(
-          "Active cart already exists for user: " + userId);
+    Cart cart = cartRepository.findByUserIdAndActiveTrue(userId)
+        .orElseGet(() -> {
+          Cart newCart = new Cart();
+          newCart.setUser(user);
+          newCart.setActive(true);
+          return cartRepository.save(newCart);
+        });
+
+    Optional<CartItem> existingItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId);
+    if (existingItem.isPresent()) {
+      CartItem item = existingItem.get();
+      item.setQuantity(item.getQuantity() + quantity);
+      cartItemRepository.save(item);
+    } else {
+      addItemToCart(cart, product, quantity);
     }
 
-    // Create new cart
-    Cart cart = new Cart();
-    cart.setUser(user);
-    cart.setActive(true);
-    Cart savedCart = cartRepository.save(cart);
+    return mappingService.mapEntityToDto(cart);
+  }
 
-    // Create cart item
+  private void addItemToCart(Cart cart, Product product, Integer quantity) {
     CartItem cartItem = new CartItem();
-    cartItem.setCart(savedCart);
+    cartItem.setCart(cart);
     cartItem.setProduct(product);
     cartItem.setQuantity(quantity);
+    cart.getCartItems().add(cartItem);
+
     cartItemRepository.save(cartItem);
-
-    // Retrieve updated cart with all relationships
-    Cart resultCart = cartRepository.findById(savedCart.getId())
-        .orElseThrow(() -> new ResourceNotFoundException(
-            "Cart not found after saving with id: " + savedCart.getId()));
-
-    // Convert to DTO and return
-    return mappingService.mapEntityToDto(resultCart);
   }
 
   @Override
@@ -104,8 +99,11 @@ public class CartServiceImpl implements CartService {
   }
 
   @Override
-  public Optional<CartDto> removeCart(Long id) {
-    return null;
+  public void removeCart(Long id) {
+    Cart cart = cartRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("ResourceNotFoundException "));
+    cart.setActive(false);
+    cartRepository.save(cart);
   }
 
   @Override
