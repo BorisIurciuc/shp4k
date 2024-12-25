@@ -65,7 +65,8 @@ public class CartServiceImpl implements CartService {
     }
 
     // Ищем, есть ли товар уже в корзине
-    Optional<CartItem> existingCartItem = cart.getCartItems().stream()
+    Optional<CartItem> existingCartItem = cart.getCartItems()
+        .stream()
         .filter(cartItem -> cartItem.getProduct().getId().equals(productId))
         .findFirst();
 
@@ -92,13 +93,16 @@ public class CartServiceImpl implements CartService {
     return mappingService.mapEntityToDto(savedCart);
   }
 
-
   /**
    * Пересчитывает общую стоимость и количество товаров в корзине.
    */
   private void updateCartTotals(Cart cart) {
-    int totalItems = cart.getCartItems().stream().mapToInt(CartItem::getQuantity).sum();
-    BigDecimal totalPrice = cart.getCartItems().stream()
+    int totalItems = cart.getCartItems()
+        .stream()
+        .mapToInt(CartItem::getQuantity)
+        .sum();
+    BigDecimal totalPrice = cart.getCartItems()
+        .stream()
         .map(cartItem -> cartItem.getProduct().getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -109,13 +113,19 @@ public class CartServiceImpl implements CartService {
 
   @Override
   public List<CartDto> getAllCarts() {
-    return List.of();
+        return cartRepository.findAll()
+            .stream()
+            .map(mappingService::mapEntityToDto)
+            .toList();
   }
 
   @Override
-  public Optional<CartDto> getCart(Long id) {
-    return null;
+  public CartDto getCartById(Long id) {
+    Cart entity = cartRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id: " + id));
+    return mappingService.mapEntityToDto(entity);
   }
+
 
   @Override
   public void removeCart(Long id) {
@@ -129,4 +139,7 @@ public class CartServiceImpl implements CartService {
   public CartDto updateCart(CartDto dto, Long id) {
     return null;
   }
-}
+  }
+
+
+
