@@ -31,8 +31,12 @@ public class CartController {
       @RequestParam Long userId,
       @RequestParam Long productId,
       @RequestParam Integer quantity) {
+    if (quantity <= 0) {
+      throw new IllegalArgumentException("Quantity must be greater than zero.");
+    }
     return service.addCart(userId, productId, quantity);
   }
+
 
   @DeleteMapping
   public void closeCart(@RequestParam Long cartId) {

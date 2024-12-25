@@ -6,7 +6,7 @@ import train.shp4k.domain.entity.Cart;
 
 @Mapper(
     componentModel = "spring",
-    uses = {ProductMappingService.class, CartItemMappingService.class, UserMappingService.class},
+    uses = {ProductMappingService.class, UserMappingService.class},
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     unmappedTargetPolicy = ReportingPolicy.ERROR
 )

@@ -1,6 +1,7 @@
 package train.shp4k.service;
 
 import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -22,71 +23,89 @@ import train.shp4k.service.mapping.ProductMappingService;
 public class CartServiceImpl implements CartService {
 
   private final CartRepository cartRepository;
-  private final CartItemRepository cartItemRepository;
-  private final ProductRepository productRepository;
   private final UserRepository userRepository;
+  private final ProductRepository productRepository;
 
   private final CartMappingService mappingService;
-//  private final CartItemMappingService itemMappingService;
-//  private final ProductMappingService productMappingService;
 
-  public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository,
-      ProductRepository productRepository, UserRepository userRepository,
-      CartMappingService mappingService,
-      ProductMappingService productMappingService) {
+
+  public CartServiceImpl(CartRepository cartRepository, UserRepository userRepository,
+      ProductRepository productRepository, CartMappingService mappingService) {
     this.cartRepository = cartRepository;
-    this.cartItemRepository = cartItemRepository;
-    this.productRepository = productRepository;
     this.userRepository = userRepository;
+    this.productRepository = productRepository;
     this.mappingService = mappingService;
-//    this.itemMappingService = itemMappingService;
-//    this.productMappingService = productMappingService;
   }
 
   @Override
   @Transactional
   public CartDto addCart(Long userId, Long productId, Integer quantity) {
-    if (quantity < 1) {
-      throw new IllegalArgumentException("Quantity must be at least 1");
-    }
-
+    // Проверяем, существует ли пользователь
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new ResourceNotFoundException(
-            "User not found with id: " + userId));
+        .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
+    // Проверяем, существует ли продукт
     Product product = productRepository.findById(productId)
-        .orElseThrow(() -> new ResourceNotFoundException(
-            "Product not found with id: " + productId));
+        .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
 
-    Cart cart = cartRepository.findByUserIdAndActiveTrue(userId)
-        .orElseGet(() -> {
-          Cart newCart = new Cart();
-          newCart.setUser(user);
-          newCart.setActive(true);
-          return cartRepository.save(newCart);
-        });
+    // Ищем активную корзину пользователя
+    Optional<Cart> optionalCart = cartRepository.findByUserAndActive(user, true);
 
-    Optional<CartItem> existingItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId);
-    if (existingItem.isPresent()) {
-      CartItem item = existingItem.get();
-      item.setQuantity(item.getQuantity() + quantity);
-      cartItemRepository.save(item);
+    Cart cart;
+    if (optionalCart.isPresent()) {
+      // Если активная корзина существует, используем её
+      cart = optionalCart.get();
     } else {
-      addItemToCart(cart, product, quantity);
+      // Если активной корзины нет, создаем новую
+      cart = new Cart();
+      cart.setUser(user);
+      cart.setActive(true);
+      cart.setTotalPrice(BigDecimal.ZERO);
+      cart.setTotalItems(0);
     }
 
-    return mappingService.mapEntityToDto(cart);
+    // Ищем, есть ли товар уже в корзине
+    Optional<CartItem> existingCartItem = cart.getCartItems().stream()
+        .filter(cartItem -> cartItem.getProduct().getId().equals(productId))
+        .findFirst();
+
+    if (existingCartItem.isPresent()) {
+      // Если товар уже в корзине, обновляем количество
+      CartItem cartItem = existingCartItem.get();
+      cartItem.setQuantity(cartItem.getQuantity() + quantity);
+    } else {
+      // Если товара нет, добавляем его в корзину
+      CartItem newCartItem = new CartItem();
+      newCartItem.setCart(cart);
+      newCartItem.setProduct(product);
+      newCartItem.setQuantity(quantity);
+      cart.getCartItems().add(newCartItem);
+    }
+
+    // Пересчитываем общую стоимость и количество товаров в корзине
+    updateCartTotals(cart);
+
+    // Сохраняем корзину
+    Cart savedCart = cartRepository.save(cart);
+
+    // Возвращаем DTO
+    return mappingService.mapEntityToDto(savedCart);
   }
 
-  private void addItemToCart(Cart cart, Product product, Integer quantity) {
-    CartItem cartItem = new CartItem();
-    cartItem.setCart(cart);
-    cartItem.setProduct(product);
-    cartItem.setQuantity(quantity);
-    cart.getCartItems().add(cartItem);
 
-    cartItemRepository.save(cartItem);
+  /**
+   * Пересчитывает общую стоимость и количество товаров в корзине.
+   */
+  private void updateCartTotals(Cart cart) {
+    int totalItems = cart.getCartItems().stream().mapToInt(CartItem::getQuantity).sum();
+    BigDecimal totalPrice = cart.getCartItems().stream()
+        .map(cartItem -> cartItem.getProduct().getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())))
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    cart.setTotalItems(totalItems);
+    cart.setTotalPrice(totalPrice);
   }
+
 
   @Override
   public List<CartDto> getAllCarts() {

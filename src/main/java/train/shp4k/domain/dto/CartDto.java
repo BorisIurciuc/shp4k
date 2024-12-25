@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import train.shp4k.domain.entity.CartItem;
 
 /**
  * 20/12/2024 shp4k
@@ -21,7 +22,7 @@ public class CartDto {
   @NotNull(message = "User cannot be null")
   private UserDto user;
 
-  private List<CartItemDto> cartItems = new ArrayList<>();
+  private List<CartItem> cartItems = new ArrayList<>();
 
   @NotNull(message = "Total price cannot be null")
   @Min(value = 0, message = "Total price cannot be negative")
@@ -34,7 +35,7 @@ public class CartDto {
 
   public CartDto() {}
 
-  public CartDto(Long id, UserDto user, List<CartItemDto> cartItems, BigDecimal totalPrice,
+  public CartDto(Long id, UserDto user, List<CartItem> cartItems, BigDecimal totalPrice,
       int totalItems, boolean active) {
     this.id = id;
     this.user = user;
@@ -50,8 +51,8 @@ public class CartDto {
   public void setUser(      @NotNull(message = "User cannot be null") UserDto user) {
     this.user = user;
   }
-  public List<CartItemDto> getCartItems() {    return cartItems;  }
-  public void setCartItems(List<CartItemDto> cartItems) {    this.cartItems = cartItems;  }
+  public List<CartItem> getCartItems() {    return cartItems;  }
+  public void setCartItems(List<CartItem> cartItems) {    this.cartItems = cartItems;  }
   public @NotNull(message = "Total price cannot be null") @Min(value = 0, message = "Total price cannot be negative") BigDecimal getTotalPrice() {
     return totalPrice;
   }
