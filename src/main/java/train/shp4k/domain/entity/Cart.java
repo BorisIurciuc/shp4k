@@ -1,15 +1,7 @@
 package train.shp4k.domain.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -31,11 +23,12 @@ public class Cart {
   private Long id;
 
   @NotNull
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
   @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonManagedReference
   private List<CartItem> cartItems = new ArrayList<>();
 
   @Column(name = "total_price", nullable = false)
@@ -59,43 +52,32 @@ public class Cart {
 
   public Cart() {}
 
-  public Long getId() {    return id;  }
-  public void setId(Long id) {    this.id = id;  }
-  public User getUser() {    return user;  }
-  public void setUser(User user) {    this.user = user;  }
-  public List<CartItem> getCartItems() {    return cartItems;  }
-  public void setCartItems(List<CartItem> cartItems) {    this.cartItems = cartItems;  }
-  public BigDecimal getTotalPrice() {    return totalPrice;  }
-  public void setTotalPrice(BigDecimal totalPrice) {    this.totalPrice = totalPrice;  }
-  public int getTotalItems() {    return totalItems;  }
-  public void setTotalItems(int totalItems) {    this.totalItems = totalItems;  }
-
-  public boolean isActive() {
-    return active;
-  }
-
-  public void setActive(boolean active) {
-    this.active = active;
-  }
+  public Long getId() { return id; }
+  public void setId(Long id) { this.id = id; }
+  public User getUser() { return user; }
+  public void setUser(User user) { this.user = user; }
+  public List<CartItem> getCartItems() { return cartItems; }
+  public void setCartItems(List<CartItem> cartItems) { this.cartItems = cartItems; }
+  public BigDecimal getTotalPrice() { return totalPrice; }
+  public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
+  public int getTotalItems() { return totalItems; }
+  public void setTotalItems(int totalItems) { this.totalItems = totalItems; }
+  public boolean isActive() { return active; }
+  public void setActive(boolean active) { this.active = active; }
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof Cart cart)) {
-      return false;
-    }
+    if (this == o) return true;
+    if (!(o instanceof Cart cart)) return false;
     return getTotalItems() == cart.getTotalItems() && isActive() == cart.isActive()
-        && Objects.equals(getId(), cart.getId()) && Objects.equals(getUser(),
-        cart.getUser()) && Objects.equals(getCartItems(), cart.getCartItems())
+        && Objects.equals(getId(), cart.getId()) && Objects.equals(getUser(), cart.getUser())
+        && Objects.equals(getCartItems(), cart.getCartItems())
         && Objects.equals(getTotalPrice(), cart.getTotalPrice());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getId(), getUser(), getCartItems(), getTotalPrice(), getTotalItems(),
-        isActive());
+    return Objects.hash(getId(), getUser(), getTotalPrice(), getTotalItems(), isActive());
   }
 
   @Override
