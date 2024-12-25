@@ -27,14 +27,17 @@ public class CartServiceImpl implements CartService {
   private final ProductRepository productRepository;
 
   private final CartMappingService mappingService;
+  private final CartItemRepository cartItemRepository;
 
 
   public CartServiceImpl(CartRepository cartRepository, UserRepository userRepository,
-      ProductRepository productRepository, CartMappingService mappingService) {
+      ProductRepository productRepository, CartMappingService mappingService,
+      CartItemRepository cartItemRepository) {
     this.cartRepository = cartRepository;
     this.userRepository = userRepository;
     this.productRepository = productRepository;
     this.mappingService = mappingService;
+    this.cartItemRepository = cartItemRepository;
   }
 
   @Override
@@ -135,11 +138,31 @@ public class CartServiceImpl implements CartService {
     cartRepository.save(cart);
   }
 
+
+
+
   @Override
   public CartDto updateCart(CartDto dto, Long id) {
     return null;
   }
+
+  @Override
+  public void removeProductFromCart(Long cartId, Long cartItemId) {
+    // 1. Проверка существования корзины
+    Cart cart = cartRepository.findById(cartId)
+        .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id: " + cartId));
+    // 2. Поиск записи в таблице cart_items
+    CartItem cartItem = cartItemRepository.findById(cartItemId)
+        .orElseThrow(() -> new ResourceNotFoundException("CartItem not found with id: " + cartItemId));
+    // 3. Убедимся, что cartItem принадлежит указанной корзине
+    if (!cartItem.getCart().getId().equals(cartId)) {
+      throw new RuntimeException("Cart item does not belong to the cart  with id: " + cartId);
+    }
+    // 4. Удаление записи
+    cartItemRepository.delete(cartItem);
   }
+}
+
 
 
 
