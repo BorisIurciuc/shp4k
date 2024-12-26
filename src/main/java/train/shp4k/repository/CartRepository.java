@@ -12,7 +12,7 @@ import train.shp4k.domain.entity.User;
  * @author Boris Iurciuc (cohort36)
  */
 
-@Repository
+
 public interface CartRepository extends JpaRepository<Cart, Long> {
 
   Optional<Cart> findByUserAndActive(User user, boolean active);
