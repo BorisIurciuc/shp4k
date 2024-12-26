@@ -1,10 +1,7 @@
 package train.shp4k.service.interfaces;
 
 import java.util.List;
-import java.util.Optional;
 import train.shp4k.domain.dto.CartDto;
-import train.shp4k.domain.entity.Cart;
-import train.shp4k.domain.entity.Product;
 
 public interface CartService {
   CartDto addCart(Long userId, Long productId, Integer quantity);

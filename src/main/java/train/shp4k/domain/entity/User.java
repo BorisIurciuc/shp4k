@@ -53,12 +53,15 @@ public class User implements UserDetails {
     inverseJoinColumns = @JoinColumn(name="role_id")
   )
   private Set<Role> roles;
+
+
   public Long getId() {
     return id;
   }
   public void setId(Long id) {
     this.id = id;
   }
+  @Override
   public String getUsername() {
     return username;
   }
@@ -69,6 +72,7 @@ public class User implements UserDetails {
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return roles;
   }
+  @Override
   public String getPassword() {
     return password;
   }
