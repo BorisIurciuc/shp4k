@@ -49,9 +49,6 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")
             .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasAnyRole("USER", "ADMIN")
 
-
-
-
         ).build();
   }
 }
