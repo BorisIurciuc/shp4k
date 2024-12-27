@@ -33,9 +33,24 @@ public class SecurityConfig {
         .sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
         .httpBasic(Customizer.withDefaults())
         .authorizeHttpRequests(x -> x
+            //products
             .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/products/{id}").hasAnyRole("USER", "ADMIN")
             .requestMatchers(HttpMethod.POST, "/api/products").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.PUT, "/api/products/{id}").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.DELETE, "/api/products/{id}").hasRole("ADMIN")
+            //cart
+            .requestMatchers(HttpMethod.GET, "/api/cart").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/cart/{id}").hasAnyRole("USER", "ADMIN")
+            .requestMatchers(HttpMethod.POST, "/api/cart").hasAnyRole("USER", "ADMIN")
+            .requestMatchers(HttpMethod.DELETE, "/api/cart/{id}").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.DELETE, "/{cartId}/items/{cartItemId}").hasAnyRole("USER", "ADMIN")
+            //user
+            .requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasAnyRole("USER", "ADMIN")
+
+
+
 
         ).build();
   }

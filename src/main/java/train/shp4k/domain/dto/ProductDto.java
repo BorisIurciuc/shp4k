@@ -1,5 +1,6 @@
 package train.shp4k.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,18 +23,26 @@ public class ProductDto {
   )
   private Long id;
 
+  @JsonProperty("title")
   @NotBlank(message = "Title is required")
   private String title;
 
+  @JsonProperty("description")
   private String description;
 
+  @JsonProperty("price")
   @NotNull
   @Positive(message = "Price must be greater than 0")
   private BigDecimal price;
 
+  @JsonProperty("image")
   private String image;
 
+  @JsonProperty("stock_quantity")
   private int stockQuantity;
+
+  @JsonProperty("discount")
+  private BigDecimal discount;
 
   public ProductDto() {}
 
@@ -92,6 +101,14 @@ public class ProductDto {
 
   public void setStockQuantity(int stockQuantity) { this.stockQuantity = stockQuantity; }
 
+  public BigDecimal getDiscount() {
+    return discount;
+  }
+
+  public void setDiscount(BigDecimal discount) {
+    this.discount = discount;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -104,19 +121,19 @@ public class ProductDto {
         that.getId()) && Objects.equals(getTitle(), that.getTitle())
         && Objects.equals(getDescription(), that.getDescription())
         && Objects.equals(getPrice(), that.getPrice()) && Objects.equals(
-        getImage(), that.getImage());
+        getImage(), that.getImage()) && Objects.equals(getDiscount(), that.getDiscount());
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(getId(), getTitle(), getDescription(), getPrice(), getImage(),
-        getStockQuantity());
+        getStockQuantity(), getDiscount());
   }
 
   @Override
   public String toString() {
-    return String.format("Product: id - %d, title - %s, price - %s, description - %s, stockQuantity - %s",
-        id, title, price, description, stockQuantity);
+    return String.format("Product: id - %d, title - %s, price - %s, description - %s, "
+            + "stockQuantity - %s, discount - %s", id, title, price, description, stockQuantity, discount);
   }
 
 }

@@ -46,6 +46,9 @@ public class Product {
   @Column(name = "stock_quantity")
   private int stockQuantity;
 
+  @Column(name = "discount")
+  private BigDecimal discount;
+
   public Long getId() {
     return id;
   }
@@ -102,6 +105,14 @@ public class Product {
     this.stockQuantity = stockQuantity;
   }
 
+  public BigDecimal getDiscount() {
+    return discount;
+  }
+
+  public void setDiscount(BigDecimal discount) {
+    this.discount = discount;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -114,18 +125,19 @@ public class Product {
         && Objects.equals(getId(), product.getId()) && Objects.equals(getTitle(),
         product.getTitle()) && Objects.equals(getPrice(), product.getPrice())
         && Objects.equals(getImage(), product.getImage()) && Objects.equals(
-        getDescription(), product.getDescription());
+        getDescription(), product.getDescription()) && Objects.equals(getDiscount(),
+        product.getDiscount());
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(getId(), getTitle(), getPrice(), getImage(), getDescription(), isActive(),
-        getStockQuantity());
+        getStockQuantity(), getDiscount());
   }
 
   @Override
   public String toString() {
-    return String.format("Product: id - %d, title - %s, price - %s, description - %s, active - %s, stockQuantity - %s",
-        id, title, price, description, active ? "yes" : "no", stockQuantity);
+    return String.format("Product: id - %d, title - %s, price - %s, description - %s, active - %s, stockQuantity - %s, discount - %s",
+        id, title, price, description, active ? "yes" : "no", stockQuantity, discount);
   }
 }
