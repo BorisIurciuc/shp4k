@@ -11,6 +11,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import train.shp4k.security.security_filter.TokenFilter;
+
 /**
  * 15/12/2024 shp4k
  *
@@ -21,6 +24,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+  private TokenFilter filter;
+
+  public SecurityConfig(TokenFilter filter) {
+    this.filter = filter;
+  }
+
   @Bean
   public BCryptPasswordEncoder encoder() {
     return new BCryptPasswordEncoder();
@@ -30,8 +39,9 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http
         .csrf(AbstractHttpConfigurer::disable)
+        //.sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
         .sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-        .httpBasic(Customizer.withDefaults())
+        .addFilterAfter(filter, UsernamePasswordAuthenticationFilter.class) // добавили свой фильтр
         .authorizeHttpRequests(x -> x
             //products
             .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
@@ -48,7 +58,8 @@ public class SecurityConfig {
             //user
             .requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")
             .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasAnyRole("USER", "ADMIN")
-
+            //auth
+            .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
         ).build();
   }
 }
