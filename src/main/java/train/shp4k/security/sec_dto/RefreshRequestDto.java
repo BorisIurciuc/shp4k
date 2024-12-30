@@ -26,12 +26,9 @@ public class RefreshRequestDto {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hashCode(refreshToken);
-  }
+  public int hashCode() {    return Objects.hashCode(refreshToken);  }
 
   @Override
-  public String toString() {
-    return "RefreshRequestDto{" + "refreshToken='" + refreshToken + '\'' + '}';
+  public String toString() {    return "RefreshRequestDto{" + "refreshToken='" + refreshToken + '\'' + '}';
   }
 }

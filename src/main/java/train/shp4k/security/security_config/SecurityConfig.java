@@ -24,23 +24,20 @@ import train.shp4k.security.security_filter.TokenFilter;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-  private TokenFilter filter;
+  private final TokenFilter filter;
 
-  public SecurityConfig(TokenFilter filter) {
-    this.filter = filter;
-  }
+  public SecurityConfig(TokenFilter filter) {    this.filter = filter;  }
 
   @Bean
-  public BCryptPasswordEncoder encoder() {
-    return new BCryptPasswordEncoder();
-  }
+  public BCryptPasswordEncoder encoder() {    return new BCryptPasswordEncoder();  }
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http
         .csrf(AbstractHttpConfigurer::disable)
         //.sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-        .sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+        .sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .httpBasic(AbstractHttpConfigurer::disable)
         .addFilterAfter(filter, UsernamePasswordAuthenticationFilter.class) // добавили свой фильтр
         .authorizeHttpRequests(x -> x
             //products
@@ -59,7 +56,10 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")
             .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasAnyRole("USER", "ADMIN")
             //auth
-            .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+            .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+            .requestMatchers(HttpMethod.POST, "/register").permitAll()
+            .requestMatchers(HttpMethod.GET, "/register").permitAll()
+
         ).build();
   }
 }

@@ -9,29 +9,16 @@ import java.util.Objects;
  */
 public class TokenResponseDto {
 
-  private String accessToken;
-  private String refreshToken;
+  private final String accessToken;
+  private final String refreshToken;
 
   public TokenResponseDto(String accessToken, String refreshToken) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
   }
 
-  public String getAccessToken() {
-    return accessToken;
-  }
-
-  public void setAccessToken(String accessToken) {
-    this.accessToken = accessToken;
-  }
-
-  public String getRefreshToken() {
-    return refreshToken;
-  }
-
-  public void setRefreshToken(String refreshToken) {
-    this.refreshToken = refreshToken;
-  }
+  public String getAccessToken() {    return accessToken;  }
+  public String getRefreshToken() {    return refreshToken;  }
 
   @Override
   public boolean equals(Object o) {
@@ -46,8 +33,7 @@ public class TokenResponseDto {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(accessToken, refreshToken);
+  public int hashCode() {    return Objects.hash(accessToken, refreshToken);
   }
 
   @Override

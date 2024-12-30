@@ -22,11 +22,11 @@ import train.shp4k.security.security_service.TokenService;
 @Component
 public class TokenFilter extends GenericFilterBean {
 
-  private final StringHttpMessageConverter stringHttpMessageConverter;
+  //private final StringHttpMessageConverter stringHttpMessageConverter;
   private final TokenService service;
 
   public TokenFilter(StringHttpMessageConverter stringHttpMessageConverter, TokenService service) {
-    this.stringHttpMessageConverter = stringHttpMessageConverter;
+    //this.stringHttpMessageConverter = stringHttpMessageConverter;
     this.service = service;
   }
 

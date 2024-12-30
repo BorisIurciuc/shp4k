@@ -10,5 +10,8 @@ public interface UserService extends UserDetailsService {
 
   List<UserDto> getUsers();
   UserDto getUserById(Long id);
+  void register(User user);
+  void registrationConfirm(String code);
+
 
 }
