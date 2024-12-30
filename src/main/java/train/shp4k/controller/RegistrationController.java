@@ -17,7 +17,7 @@ import train.shp4k.service.interfaces.UserService;
  */
 
 @RestController
-@RequestMapping("/register")
+@RequestMapping("api/register")
 public class RegistrationController {
 
   private final UserService service;
