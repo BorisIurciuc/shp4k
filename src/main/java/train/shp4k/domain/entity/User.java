@@ -54,49 +54,46 @@ public class User implements UserDetails {
   )
   private Set<Role> roles;
 
+
   public Long getId() {
     return id;
   }
-
   public void setId(Long id) {
     this.id = id;
   }
-
-  public String getUsername() {
-    return username;
-  }
-
+  @Override
+  public String getUsername() {    return username;  }
   public void setUsername(String username) {
     this.username = username;
   }
-
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return roles;
   }
-
+  @Override
   public String getPassword() {
     return password;
   }
-
   public void setPassword(String password) {
     this.password = password;
   }
-
   public String getEmail() {
     return email;
   }
-
   public void setEmail(String email) {
     this.email = email;
   }
-
   public boolean isActive() {
     return active;
   }
-
   public void setActive(boolean active) {
     this.active = active;
+  }
+  public Set<Role> getRoles() {
+    return roles;
+  }
+  public void setRoles(Set<Role> roles) {
+    this.roles = roles;
   }
 
   @Override
@@ -109,12 +106,13 @@ public class User implements UserDetails {
     }
     return isActive() == user.isActive() && Objects.equals(getId(), user.getId())
         && Objects.equals(getUsername(), user.getUsername()) && Objects.equals(
-        getPassword(), user.getPassword()) && Objects.equals(getEmail(), user.getEmail());
+        getPassword(), user.getPassword()) && Objects.equals(getEmail(), user.getEmail())
+        && Objects.equals(getRoles(), user.getRoles());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getId(), getUsername(), getPassword(), getEmail(), isActive());
+    return Objects.hash(getId(), getUsername(), getPassword(), getEmail(), isActive(), getRoles());
   }
 
   @Override

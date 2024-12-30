@@ -40,8 +40,10 @@ public class ProductController {
 //  }
 
   @PostMapping
-  public ProductDto save(@Valid @RequestBody ProductDto dto){
-    return service.addProduct(dto);
+  @Operation(summary = "Add a new product", description = "Creates a new product and saves it in the database.")
+  public ResponseEntity<ProductDto> save(@Valid @RequestBody ProductDto dto) {
+    ProductDto savedProduct = service.addProduct(dto);
+    return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
   }
 
   @GetMapping

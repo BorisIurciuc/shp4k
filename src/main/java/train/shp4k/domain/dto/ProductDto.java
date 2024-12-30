@@ -1,5 +1,6 @@
 package train.shp4k.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,25 +23,36 @@ public class ProductDto {
   )
   private Long id;
 
+  @JsonProperty("title")
   @NotBlank(message = "Title is required")
   private String title;
 
+  @JsonProperty("description")
   private String description;
 
+  @JsonProperty("price")
   @NotNull
   @Positive(message = "Price must be greater than 0")
   private BigDecimal price;
 
+  @JsonProperty("image")
   private String image;
+
+  @JsonProperty("stock_quantity")
+  private int stockQuantity;
+
+  @JsonProperty("discount")
+  private BigDecimal discount;
 
   public ProductDto() {}
 
-  public ProductDto(Long id, String title, String description, BigDecimal price, String image) {
+  public ProductDto(Long id, String title, String description, BigDecimal price, String image, int stockQuantity) {
     this.id = id;
     this.title = title;
     this.description = description;
     this.price = price;
     this.image = image;
+    this.stockQuantity = stockQuantity;
   }
 
   public Long getId() {
@@ -85,6 +97,18 @@ public class ProductDto {
     this.image = image;
   }
 
+  public int getStockQuantity() { return stockQuantity; }
+
+  public void setStockQuantity(int stockQuantity) { this.stockQuantity = stockQuantity; }
+
+  public BigDecimal getDiscount() {
+    return discount;
+  }
+
+  public void setDiscount(BigDecimal discount) {
+    this.discount = discount;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -93,21 +117,23 @@ public class ProductDto {
     if (!(o instanceof ProductDto that)) {
       return false;
     }
-    return Objects.equals(getId(), that.getId()) && Objects.equals(getTitle(),
-        that.getTitle()) && Objects.equals(getDescription(), that.getDescription())
+    return getStockQuantity() == that.getStockQuantity() && Objects.equals(getId(),
+        that.getId()) && Objects.equals(getTitle(), that.getTitle())
+        && Objects.equals(getDescription(), that.getDescription())
         && Objects.equals(getPrice(), that.getPrice()) && Objects.equals(
-        getImage(), that.getImage());
+        getImage(), that.getImage()) && Objects.equals(getDiscount(), that.getDiscount());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getId(), getTitle(), getDescription(), getPrice(), getImage());
+    return Objects.hash(getId(), getTitle(), getDescription(), getPrice(), getImage(),
+        getStockQuantity(), getDiscount());
   }
 
   @Override
   public String toString() {
-    return String.format("Product: id - %d, title - %s, price - %s, description - %s",
-        id, title, price, description);
+    return String.format("Product: id - %d, title - %s, price - %s, description - %s, "
+            + "stockQuantity - %s, discount - %s", id, title, price, description, stockQuantity, discount);
   }
 
 }
