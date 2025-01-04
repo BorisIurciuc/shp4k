@@ -15,6 +15,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import train.shp4k.domain.dto.ProductDto;
@@ -102,6 +103,8 @@ class ProductControllerTest {
       admin.setUsername(TEST_ADMIN_NAME);
       admin.setPassword(encoder.encode(TEST_PASSWORD));
       admin.setRoles(Set.of(roleAdmin, roleUser));
+      admin.setEmail("admin@example.com"); // Set a valid email address
+
 
       // save admin
       userRepository.save(admin);
@@ -121,6 +124,8 @@ class ProductControllerTest {
       user.setUsername(TEST_USER_NAME);
       user.setPassword(encoder.encode(TEST_PASSWORD));
       user.setRoles(Set.of(roleUser));
+      user.setEmail("user@example.com"); // Set a valid email address
+
 
       // save user
       userRepository.save(user);
@@ -154,7 +159,14 @@ class ProductControllerTest {
   }
 
   @Test
-  void test(){
+  public void positiveGettingAllProductsWithoutAuthorization(){
+    String url = URL_PREFIX + port + ALL_ENDPOINT;
+    // request
+    HttpEntity<Void> request = new HttpEntity<>(headers);
+    // response
+    ResponseEntity<ProductDto[]> response = template.exchange(url, HttpMethod.GET, request, ProductDto[].class);
+    assertEquals((HttpStatus.OK), response.getStatusCode(), "Wrong status code");
+    assertTrue(response.hasBody(),"Response body is empty");
 
   }
 }

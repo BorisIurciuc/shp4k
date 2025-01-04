@@ -40,7 +40,7 @@ public class User implements UserDetails {
   private String password;
 
   @Column(name = "email", unique = true, nullable = false)
-  @NotBlank(message = "Email cannot be blank")
+  //@NotBlank(message = "Email cannot be blank")
   @Email(message = "Email should be valid")
   private String email;
 
