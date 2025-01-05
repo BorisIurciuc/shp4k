@@ -3,9 +3,11 @@ package train.shp4k.controller;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +43,7 @@ class ProductControllerTest {
   private HttpHeaders headers; // with headers
 
   private ProductDto testProduct; //product for test
-
+  private Long testProductId;
   // tokens for admin and user
   private String adminAccessToken;
   private String userAccessToken;
@@ -160,13 +162,43 @@ class ProductControllerTest {
 
   @Test
   public void positiveGettingAllProductsWithoutAuthorization(){
-    String url = URL_PREFIX + port + ALL_ENDPOINT;
+    String url = URL_PREFIX + port + PRODUCTS_RESOURCE + ALL_ENDPOINT;
     // request
     HttpEntity<Void> request = new HttpEntity<>(headers);
     // response
     ResponseEntity<ProductDto[]> response = template.exchange(url, HttpMethod.GET, request, ProductDto[].class);
     assertEquals((HttpStatus.OK), response.getStatusCode(), "Wrong status code");
     assertTrue(response.hasBody(),"Response body is empty");
+  }
 
+  @Test
+  public void negativeSavingProductWithoutAuthorization() {
+    String url = URL_PREFIX + port + PRODUCTS_RESOURCE;
+    HttpEntity<ProductDto> request = new HttpEntity<>(testProduct, headers);
+
+    ResponseEntity<ProductDto> response = template.exchange(url, HttpMethod.POST, request, ProductDto.class);
+    assertEquals((HttpStatus.FORBIDDEN), response.getStatusCode(), "Response has unexpected status");
+    assertFalse(response.hasBody(), "Response has unexpected body.");
+  }
+
+  @Test
+  @Order(1)
+  public void positiveSavingProductWithAdminAuthorization() {
+    String url = URL_PREFIX + port + PRODUCTS_RESOURCE;
+    headers.put(AUTH_HEADER_NAME, List.of(adminAccessToken));
+    HttpEntity<ProductDto> entity = new HttpEntity<>(testProduct, headers);
+
+    ResponseEntity<ProductDto> response = template.exchange(
+        url,
+        HttpMethod.POST,
+        entity,
+        ProductDto.class
+    );
+    assertEquals(HttpStatus.OK, response.getStatusCode(), "Wrong status code");
+    ProductDto savedProduct = response.getBody();
+    assertNotNull(savedProduct, "Response body is empty");
+    assertEquals(testProduct.getTitle(), savedProduct.getTitle(), "Wrong title");
+
+    testProductId = savedProduct.getId();
   }
 }
